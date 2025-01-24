@@ -1,181 +1,182 @@
 import os
 import numpy as np
 from PIL import Image, ImageFilter
+from moviepy import AudioFileClip, ImageClip, TextClip, ColorClip, CompositeVideoClip
 
-# MoviePy
-from moviepy import (
-    AudioFileClip,
-    ImageClip,
-    TextClip,
-    ColorClip,
-    CompositeVideoClip
-)
 
-def create_video(audio_path, cover_path, output_path, artist = 'ZYNTHAR'):
+def make_blurred_background(cover_clip: ImageClip,
+                            final_w: int,
+                            blur_radius: float = 20.0,
+                            duration: float = 0) -> ImageClip:
     """
-    Создаёт видео из одного аудиофайла и картинки (обложки).
-    На заднем плане (фон) - обложка, растянута по ширине (1920), размыта.
-    На переднем плане - обложка, растянута по высоте (1080), без размытия.
-    Вверху текст "ZYNTHAR", внизу - название трека (большие буквы).
-    Разрешение 1920x1080, fps=1.
+    Creates a blurred background clip by stretching the cover image to the final width
+    and applying a Gaussian blur.
     """
-    # -------------------------------------------------------------------------
-    # 1. ЗАГРУЗКА АУДИО
+    img_w, img_h = cover_clip.size
+    scale_bg = final_w / img_w
+    bg_w, bg_h = final_w, int(img_h * scale_bg)
+
+    # Resize the cover temporarily
+    cover_bg_tmp = cover_clip.resized((bg_w, bg_h))
+
+    # Extract the frame as a numpy array
+    bg_frame = cover_bg_tmp.get_frame(0)
+    # Convert to PIL and blur
+    bg_frame_pil = Image.fromarray(bg_frame).filter(ImageFilter.GaussianBlur(radius=blur_radius))
+
+    # Create a new ImageClip from the blurred PIL image
+    blurred_bg = ImageClip(np.array(bg_frame_pil))
+    return (blurred_bg
+            .with_position(("center", "center"))
+            .with_duration(duration))
+
+
+def make_foreground_cover(cover_clip: ImageClip,
+                          final_h: int,
+                          duration: float) -> ImageClip:
+    """
+    Creates the foreground cover by stretching it to fill the final height (1080p).
+    """
+    img_w, img_h = cover_clip.size
+    scale_fg = final_h / img_h
+    fg_w, fg_h = int(img_w * scale_fg), final_h
+
+    return (cover_clip
+            .resized((fg_w, fg_h))
+            .with_position(("center", "center"))
+            .with_duration(duration))
+
+
+def make_text_with_bg(text: str,
+                      x_center: str or float = 'center',
+                      y_top: float = 50,
+                      font_size: int = 70,
+                      duration: float = 0,
+                      padding: int = 20,
+                      color=(0, 0, 0),
+                      text_color='white') -> tuple:
+    """
+    Creates two clips:
+      1) A black (or semi-transparent) background rectangle sized according to the text.
+      2) The text itself.
+    Returns (bg_clip, text_clip).
+    """
+    font_path = 'C:/Windows/Fonts/Impact.ttf'
+
+    # Create the text clip
+    text_clip = (TextClip(
+        text=text,
+        font=font_path,
+        font_size=font_size,
+        color=text_color,
+        method='label',
+        text_align='center'
+    )
+    .with_duration(duration)
+    .with_position((x_center, y_top)))
+
+    # Get the actual size of the text clip
+    text_w, text_h = text_clip.size
+
+    # Create the background rectangle
+    bg_clip = (ColorClip((text_w + padding * 2, text_h + padding * 2), color=color)
+               .with_duration(duration)
+               .with_position((x_center, y_top - padding)))
+
+    return bg_clip, text_clip
+
+
+def create_video(audio_path, cover_path, output_path, artist='ZYNTHAR'):
+    """
+    Creates a music video:
+    - Blurred background (width-stretched),
+    - Foreground cover (height-stretched),
+    - Two text blocks (artist on top, track name on bottom) each with a black background.
+    - Resolution: 1920x1080, fps=1
+    """
+
+    # --- Load audio ---
     audio = AudioFileClip(audio_path)
     duration = audio.duration
 
-    final_w = 1920
-    final_h = 1080
+    final_w, final_h = 1920, 1080
     text_padding = 20
 
-    local_font = 'C:/Windows/Fonts/Impact.ttf'
+    # --- Create a black fallback background (just in case) ---
+    fallback_bg = ColorClip(size=(final_w, final_h), color=(0, 0, 0)).with_duration(duration)
 
-    # -------------------------------------------------------------------------
-    # 2. ФОН (однотонный чёрный, на всякий случай)
-    background_clip = ColorClip(size=(final_w, final_h), color=(0, 0, 0))
-    background_clip = background_clip.with_duration(duration)
-
-    # -------------------------------------------------------------------------
-    # 3. ЗАГРУЗКА ОБЛОЖКИ (ImageClip)
+    # --- Load cover as ImageClip ---
     original_cover = ImageClip(cover_path)
 
-    # Исходные размеры картинки
-    img_w, img_h = original_cover.size
+    # --- Create blurred background ---
+    cover_bg = make_blurred_background(
+        cover_clip=original_cover,
+        final_w=final_w,
+        duration=duration
+    )
 
-    # -------------------------------------------------------------------------
-    # 4. ЗАДНИЙ ПЛАН (РАЗМЫТЫЙ)
-    #    4.1. Определяем масштаб, чтобы растянуть по ширине (1920)
-    scale_bg = final_w / img_w
-    bg_w = final_w
-    bg_h = int(img_h * scale_bg)
+    # --- Create foreground cover (no blur) ---
+    cover_fg = make_foreground_cover(
+        cover_clip=original_cover,
+        final_h=final_h,
+        duration=duration
+    )
 
-    #    4.2. Создаём временный клип для изменения размера
-    cover_bg_tmp = original_cover.resized((bg_w, bg_h))
-
-    #    4.3. Извлекаем кадр (так как обложка статична, это будет один и тот же кадр)
-    bg_frame = cover_bg_tmp.get_frame(0)  # numpy-array [h, w, 3]
-    #    4.4. Превращаем в PIL-изображение, размываем
-    bg_frame_pil = Image.fromarray(bg_frame)
-    bg_frame_pil = bg_frame_pil.filter(ImageFilter.GaussianBlur(radius=20))
-
-    #    4.5. Создаём из размытой PIL-картинки новый ImageClip
-    cover_bg = ImageClip(np.array(bg_frame_pil))
-    cover_bg = (cover_bg
-                .with_position(("center", "center"))
-                .with_duration(duration))
-
-    # -------------------------------------------------------------------------
-    # 5. ПЕРЕДНИЙ ПЛАН (БЕЗ РАЗМЫТИЯ)
-    #    Растягиваем по высоте (1080)
-    scale_fg = final_h / img_h
-    fg_w = int(img_w * scale_fg)
-    fg_h = final_h
-
-    cover_fg = (original_cover
-                .resized((fg_w, fg_h))
-                .with_position(("center", "center"))
-                .with_duration(duration))
-
-    # -------------------------------------------------------------------------
-    # 6. ТЕКСТОВЫЕ КЛИПЫ
-
-    # Вверху - "ZYNTHAR"
-    top_text_clip = (TextClip(
+    # --- Create top text (artist) with black background ---
+    top_bg, top_txt = make_text_with_bg(
         text=artist,
-        font=local_font,  # путь к реальному TTF
-        font_size=70,
-        color='white',
-        method='label',
-        text_align='center'
-    )
-        .with_duration(duration)
-        .with_position(('center', 50)))
-
-
-    text_w, text_h = top_text_clip.size
-
-    # Создаём чёрный прямоугольник чуть больше текста (добавим отступы)
-    bg_clip_top = (
-        ColorClip((text_w + text_padding * 2, text_h + text_padding * 2), color=(0, 0, 0, 0.8))
-               .with_position(('center', 50 - text_padding))
-               .with_duration(duration)
+        duration=duration,
+        padding=text_padding
     )
 
-
-    # Внизу - название трека (большие буквы)
+    # --- Create bottom text (track name) with black background ---
     base_name = os.path.splitext(os.path.basename(audio_path))[0]
     bottom_text_str = base_name.upper()
+    bottom_y = final_h - 130
 
-    bottom_text_y = final_h - 130
-    bottom_text_clip = (TextClip(
+    bot_bg, bot_txt = make_text_with_bg(
         text=bottom_text_str,
-        font=local_font,
-        font_size=70,
-        color='white',
-        method='label',
-        text_align='center'
-    )
-        .with_duration(duration)
-        .with_position(('center', bottom_text_y)))
-
-    text_w, text_h = bottom_text_clip.size
-
-    # Создаём чёрный прямоугольник чуть больше текста (добавим отступы)
-    bg_clip_bottom = (
-        ColorClip((text_w + text_padding * 2, text_h + text_padding * 2), color=(0, 0, 0, 0.8))
-        .with_position(('center', bottom_text_y - text_padding))
-        .with_duration(duration)
+        y_top=bottom_y,
+        duration=duration,
+        padding=text_padding
     )
 
-    # -------------------------------------------------------------------------
-    # 7. Объединяем клипы (порядок наложения важен)
+    # --- Composite final clip ---
     final_clip = CompositeVideoClip([
-        background_clip,  # чёрный фон
-        cover_bg,         # размытая обложка
-        cover_fg,         # обложка поверх
-        bg_clip_top,
-        top_text_clip,
-        bg_clip_bottom,
-        bottom_text_clip
-    ], size=(final_w, final_h))
+        fallback_bg,
+        cover_bg,
+        cover_fg,
+        top_bg,  # black box behind top text
+        top_txt,
+        bot_bg,  # black box behind bottom text
+        bot_txt
+    ], size=(final_w, final_h)).with_audio(audio)
 
-    final_clip = final_clip.with_audio(audio)
-
-    # -------------------------------------------------------------------------
-    # 8. Сохраняем финальное видео
+    # --- Export video ---
     final_clip.write_videofile(
         output_path,
         fps=1,
-        codec='h264_nvenc',  # при наличии GPU и ffmpeg с nvenc
+        codec='h264_nvenc',
         audio_codec='aac',
         audio_bitrate="320k",
     )
 
 
 def main():
-    artist = input("Введите имя исполнителя (по умолчанию ZYNTHAR): ").strip()
-    if not artist:
-        artist = "ZYNTHAR"
+    artist_input = input("Enter artist name (default 'ZYNTHAR'): ").strip()
+    artist_name = artist_input if artist_input else "ZYNTHAR"
 
-    """
-    1. Проходим по папке Mastered (WAV / MP3 / и т.д.).
-    2. Для каждого файла ищем обложку .jpeg в Covers с тем же именем.
-    3. Создаём видео в Videos с тем же названием ( .mp4 ).
-    4. В конце печатаем два списка: успешно обработанные и пропущенные (с ошибками).
-    """
     current_dir = os.path.dirname(os.path.abspath(__file__))
-
     mastered_dir = os.path.join(current_dir, "Mastered")
-    covers_dir   = os.path.join(current_dir, "Covers")
-    videos_dir   = os.path.join(current_dir, "Videos")
+    covers_dir = os.path.join(current_dir, "Covers")
+    videos_dir = os.path.join(current_dir, "Videos")
 
     if not os.path.exists(videos_dir):
         os.makedirs(videos_dir)
 
-    success_list = []
-    fail_list = []
+    processed_tracks = []
+    error_tracks = []
 
-    # Перебираем файлы в Mastered
     for filename in os.listdir(mastered_dir):
         audio_path = os.path.join(mastered_dir, filename)
 
@@ -187,47 +188,44 @@ def main():
             continue
 
         base_name = os.path.splitext(filename)[0]
-        cover_name = base_name + ".jpeg"
+        cover_name = f"{base_name}.jpeg"
         cover_path = os.path.join(covers_dir, cover_name)
 
         if not os.path.exists(cover_path):
-            reason = f"Обложка '{cover_name}' не найдена в папке Covers."
-            fail_list.append((filename, reason))
+            error_tracks.append((filename, f"Cover '{cover_name}' not found in 'Covers' folder."))
             continue
 
-        output_name = base_name + ".mp4"
+        output_name = f"{base_name}.mp4"
         output_path = os.path.join(videos_dir, output_name)
 
-        # Проверяем, не существует ли уже файл
         if os.path.exists(output_path):
-            print(f"[SKIP] Видео уже существует и будет пропущено: {output_name}")
-            success_list.append(filename)  # или можно написать "skip_list"
+            print(f"[SKIP] Video already exists. Skipping: {output_name}")
+            processed_tracks.append(filename)
             continue
 
-        print(f"[INFO] Начинаем обработку: {filename}")
-
+        print(f"[INFO] Processing: {filename}")
         try:
-            create_video(audio_path, cover_path, output_path, artist)
-            success_list.append(filename)
-            print(f"[OK] Успешно сохранено видео: {output_name}\n")
+            create_video(audio_path, cover_path, output_path, artist=artist_name)
+            processed_tracks.append(filename)
+            print(f"[OK] Video saved: {output_name}\n")
         except Exception as e:
-            fail_list.append((filename, str(e)))
-            print(f"[ERROR] Не удалось создать видео для '{filename}': {e}\n")
+            error_tracks.append((filename, str(e)))
+            print(f"[ERROR] Failed to create video for '{filename}': {e}\n")
 
-    print("\n===== РЕЗУЛЬТАТ ОБРАБОТКИ =====\n")
-    if success_list:
-        print("Успешно созданы видео для:")
-        for s in success_list:
-            print("  -", s)
+    print("\n===== PROCESSING RESULTS =====\n")
+    if processed_tracks:
+        print("Successfully created videos for:")
+        for track in processed_tracks:
+            print(f"  - {track}")
     else:
-        print("Нет успешно обработанных файлов.")
+        print("No videos were created.")
 
-    if fail_list:
-        print("\nПропущенные/ошибки:")
-        for f, reason in fail_list:
-            print(f"  - {f}: {reason}")
+    if error_tracks:
+        print("\nSkipped/Errors:")
+        for track, reason in error_tracks:
+            print(f"  - {track}: {reason}")
     else:
-        print("\nОшибок не обнаружено!")
+        print("\nNo errors encountered!")
 
 
 if __name__ == "__main__":

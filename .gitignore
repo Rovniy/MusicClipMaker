@@ -1,4 +1,10 @@
 .idea
 .venv
 /Videos/*
+/Visualization/*
 .venv/*
+dist
+build
+build/*
+buildenv
+buildenv/*

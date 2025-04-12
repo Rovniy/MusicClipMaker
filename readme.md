@@ -94,3 +94,9 @@ Feel free to open issues or submit pull requests to improve the script or add ne
 ## License
 
 This project is released under the **MIT License**.
+
+## Build
+
+```bash
+pyinstaller MusicVisualizer.spec
+```

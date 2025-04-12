@@ -1,0 +1,11 @@
+moviepy @ git+https://github.com/Zulko/moviepy.git
+librosa==0.10.1
+numpy==1.26.4
+scipy>=1.10
+pillow>=9.5.0
+matplotlib>=3.7
+imageio>=2.31
+imageio-ffmpeg>=0.4.8
+python-dotenv>=1.0
+decorator>=5.1
+proglog>=0.1.10

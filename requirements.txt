@@ -9,3 +9,4 @@ imageio-ffmpeg>=0.4.8
 python-dotenv>=1.0
 decorator>=5.1
 proglog>=0.1.10
+pyinstaller>=6.12.0

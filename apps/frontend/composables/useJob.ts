@@ -14,7 +14,7 @@ export function useJob() {
 
     // 1️⃣ Создать задачу
     async function createJob(userId: string, settings: any) {
-        const res = await $fetch('https://createjob-wvazgkkkrq-uc.a.run.app', {
+        const res = await $fetch('/api/createJob', {
             method: 'POST',
             body: { userId, settings },
         })
@@ -43,7 +43,7 @@ export function useJob() {
     // 3️⃣ Уведомить бэкенд, что файлы загружены
     async function notifyUpload() {
         if (!jobId.value) throw new Error('Нет jobId')
-        await $fetch('https://notifyuploadcomplete-wvazgkkkrq-uc.a.run.app', {
+        await $fetch('/api/notifyUploadComplete', {
             method: 'POST',
             body: { jobId: jobId.value },
         })

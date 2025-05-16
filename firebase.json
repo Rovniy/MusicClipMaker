@@ -31,14 +31,6 @@
       {
         "source": "**",
         "destination": "/index.html"
-      },
-      {
-        "source": "/api/createJob",
-        "function": "createJob"
-      },
-      {
-        "source": "/api/notifyUploadComplete",
-        "function": "notifyUploadComplete"
       }
     ]
   },

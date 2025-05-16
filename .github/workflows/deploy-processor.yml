@@ -1,0 +1,46 @@
+name: Deploy Processor
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'apps/processor/**'
+      - 'infra/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Configure GCP project
+        run: |
+          gcloud config set project visualizationmaker-b8ff1
+          gcloud config set run/region us-central1
+
+      - name: Build and Push image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT }}/musicvis-processor:latest apps/processor
+          docker push gcr.io/${{ secrets.GCP_PROJECT }}/musicvis-processor:latest
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy processor \
+            --image gcr.io/${{ secrets.GCP_PROJECT }}/musicvis-processor:latest \
+            --platform managed \
+            --allow-unauthenticated \
+            --set-env-vars GCS_BUCKET=${{ secrets.GCP_BUCKET_NAME }}
+          
+          
+
+  
+

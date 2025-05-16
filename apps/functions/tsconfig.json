@@ -7,12 +7,14 @@
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
-    "strict": true,
     "target": "es2017",
-    "skipLibCheck": true,
+    "skipLibCheck": true
   },
   "compileOnSave": true,
   "include": [
     "src"
-  ]
+  ],
+  "rules": {
+    "max-length": 150
+  }
 }

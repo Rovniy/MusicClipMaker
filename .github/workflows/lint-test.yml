@@ -1,0 +1,31 @@
+name: Lint & Test
+
+on:
+  push:
+    paths:
+      - 'apps/**'
+      - '.github/workflows/**'
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/frontend } }
+    steps:
+      - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2
+        with: { version: 8 }
+      - run: npm install
+      - run: npm lint
+      - run: npm test
+
+  functions:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: apps/functions } }
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with: { node-version: '22' }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+      - run: npm test

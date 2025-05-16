@@ -1,7 +1,7 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
 import {FieldValue} from "firebase-admin/firestore";
-import {corsHandler} from "./env";
+import {corsHandler} from "../utils/env";
 
 export const createJob = functions
     .https
@@ -46,7 +46,7 @@ export const createJob = functions
                     contentType: "application/octet-stream",
                 });
 
-            res.json({
+            res.status(200).json({
                 jobId: jobRef.id,
                 uploadUrls: {audio: audioUpload, cover: coverUpload},
             });

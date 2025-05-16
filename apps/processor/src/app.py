@@ -1,7 +1,3 @@
-# apps/processor/src/app.py
-"""
-Flask-сервис: получает Pub/Sub push, обрабатывает задачу и завершает.
-"""
 import os
 import json
 import base64

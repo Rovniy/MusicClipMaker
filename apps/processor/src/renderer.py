@@ -1,7 +1,3 @@
-# apps/processor/src/renderer.py
-"""
-Визуализатор: читает аудио и обложку, генерирует waveform-анимацию и выводит видео.
-"""
 import os
 import numpy as np
 from moviepy.editor import (

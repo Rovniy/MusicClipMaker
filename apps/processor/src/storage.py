@@ -1,7 +1,3 @@
-# apps/processor/src/storage.py
-"""
-Работа с GCS и Firestore: загрузка исходников, выгрузка результатов и обновление статуса.
-"""
 import os
 import tempfile
 from google.cloud import storage, firestore

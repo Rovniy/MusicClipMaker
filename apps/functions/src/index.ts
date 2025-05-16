@@ -2,6 +2,7 @@ import * as admin from "firebase-admin";
 import {createJob} from "./handlers/createJob";
 import {notifyUploadComplete} from "./handlers/notifyUpload";
 
+// t
 // Инициализируем Admin SDK ровно один раз
 admin.initializeApp();
 

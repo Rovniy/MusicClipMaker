@@ -29,12 +29,16 @@ export function useJob() {
         await Promise.all([
             fetch(uploadUrls.value.audio, {
                 method: 'PUT',
-                headers: { 'Content-Type': audioFile.type },
+                headers: {
+                    'Content-Type': 'application/octet-stream'   // ← именно так
+                },
                 body: audioFile,
             }),
             fetch(uploadUrls.value.cover, {
                 method: 'PUT',
-                headers: { 'Content-Type': coverFile.type },
+                headers: {
+                    'Content-Type': 'application/octet-stream'   // ← именно так
+                },
                 body: coverFile,
             }),
         ])

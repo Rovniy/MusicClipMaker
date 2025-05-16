@@ -12,11 +12,14 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with: { 'node-version': '22' }
+
+      - name: Build frontend
+        run: "cd apps/frontend && npm ci && npm run generate"
 
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
@@ -27,6 +30,7 @@ jobs:
           repoToken: '${{ secrets.TOKEN_GITHUB_PERSONAL_ACC }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_VISUALIZATIONMAKER_B8FF1 }}'
           channelId: live
+          projectId: '${{ secrets.GCP_PROJECT }}'
 
       - name: Deploy Functions
         run: |

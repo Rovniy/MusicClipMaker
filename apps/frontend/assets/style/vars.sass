@@ -1,0 +1,148 @@
+:root
+  --main-font: 'Parkinsans', sans-serif
+
+  --header_height: 80px
+
+  --uicolor-black: #101010
+  --uicolor-dark: #202020
+  --uicolor-dark-gray: #5F5F5F
+  --uicolor-gray: #A8A8A8
+  --uicolor-white: #FFFFFF
+  --uicolor-orange: #D83F04
+
+// Mobile first паттерн
+@mixin mobile_xl
+  @media screen and (min-width: 490px)
+    @content
+
+@mixin tablet
+  @media screen and (min-width: 759px)
+    @content
+
+@mixin tablet-xl
+  @media screen and (min-width: 900px)
+    @content
+
+@mixin desktop
+  @media screen and (min-width: 1200px)
+    @content
+
+@mixin desktop-xl
+  @media screen and (min-width: 1600px)
+    @content
+
+/************************* FLEX ***********************/
+@mixin flex_center
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: center
+
+@mixin flex_center_column
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: center
+
+@mixin flex_start
+  display: flex
+  flex-direction: row
+  align-items: flex-start
+  justify-content: flex-start
+
+@mixin flex_start_column
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  justify-content: flex-start
+
+@mixin flex_end_column
+  display: flex
+  flex-direction: column
+  align-items: flex-end
+  justify-content: flex-start
+
+@mixin flex_start_center_column
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: flex-start
+
+@mixin flex_start_inherit_column
+  display: flex
+  flex-direction: column
+  align-items: inherit
+  justify-content: flex-start
+
+@mixin flex_end_inherit_column
+  display: flex
+  flex-direction: column
+  align-items: inherit
+  justify-content: flex-end
+
+@mixin flex_space_between_inherit_column
+  display: flex
+  flex-direction: column
+  align-items: inherit
+  justify-content: space-between
+
+@mixin flex_center_start
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: flex-start
+
+@mixin flex_center_start_column
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  justify-content: center
+
+@mixin flex_end_center_column
+  display: flex
+  flex-direction: column
+  justify-content: flex-end
+  align-items: center
+
+@mixin flex_center_end
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: flex-end
+
+@mixin flex_start_end
+  display: flex
+  flex-direction: row
+  align-items: flex-start
+  justify-content: flex-end
+
+@mixin flex_space_between
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: space-between
+
+@mixin flex_space_between_column
+  display: flex
+  flex-direction: column
+  align-items: center
+  justify-content: space-between
+
+@mixin flex_space_around_row
+  display: flex
+  flex-direction: row
+  align-items: center
+  justify-content: space-around
+
+@mixin flex_start_space_between
+  display: flex
+  flex-direction: row
+  align-items: flex-start
+  justify-content: space-between
+
+@mixin flex_start_space_between_column
+  display: flex
+  flex-direction: column
+  align-items: flex-start
+  justify-content: space-between
+

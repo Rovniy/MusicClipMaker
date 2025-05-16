@@ -1,0 +1,67 @@
+@font-face
+  font-family: "Parkinsans"
+  src: url("../fonts/parkinsans.ttf") format("truetype")
+  font-style: normal
+  font-weight: 400
+  font-display: swap
+
+@font-face
+  font-family: "Parkinsans"
+  src: url("../fonts/parkinsans.ttf") format("truetype")
+  font-style: italic
+  font-weight: 400
+  font-display: swap
+
+html, body
+  margin: 0
+  padding: 0
+  background: var(--uicolor-black)
+  color: var(--uicolor-white)
+  min-height: 100vh
+
+#__nuxt
+  min-height: 100vh
+  +flex_start_column
+
+*
+  box-sizing: border-box
+
+h1
+  font: 700 24px/32px var(--main-font)
+  margin: 20px 0
+  +desktop
+    font: 700 40px/48px var(--main-font)
+
+h2
+  font: 700 32px/36px var(--main-font)
+  margin: 20px 0
+
+h3
+  font: 700 28px/32px var(--main-font)
+  margin: 20px 0
+
+h4
+  font: 700 24px/28px var(--main-font)
+  margin: 20px 0
+
+h5
+  font: 700 20px/24px var(--main-font)
+  margin: 20px 0
+
+p, span, a, blockquote
+  font: 400 16px/22px var(--main-font)
+
+.document_wrapper
+  h1, h2, h3, h4, h5, p, span, ul, li, ol, a
+    color: var(--uicolor-white)
+
+.container
+  width: 100%
+  max-width: 1200px
+  margin: 0 auto
+  padding: 20px
+  height: 100%
+  flex-grow: 1
+  text-align: center
+  +desktop
+    padding: 40px 20px

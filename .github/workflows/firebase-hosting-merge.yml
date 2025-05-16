@@ -6,15 +6,24 @@ on:
   push:
     branches:
       - master
+    paths:
+      - 'apps/frontend/**'
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: cd /apps/frontend && npm ci && npm run generate
+      - run: "cd apps/frontend && npm ci && npm run generate"
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_VISUALIZATIONMAKER_B8FF1 }}
           channelId: live
           projectId: visualizationmaker-b8ff1
+
+      - name: Send Discord notification
+        run: |
+          LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          curl -s -X POST -H "Content-Type: application/json" \
+            -d "{\"content\": \"NEW! [VideoMaker][Frontend] deployed! Commit: $LAST_COMMIT_MESSAGE\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}

@@ -2,7 +2,11 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on PR
-on: pull_request
+on:
+  pull_request:
+    paths:
+      - 'apps/frontend/**'
+
 permissions:
   checks: write
   contents: read
@@ -19,3 +23,10 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_VISUALIZATIONMAKER_B8FF1 }}
           projectId: visualizationmaker-b8ff1
+
+      - name: Send Discord notification
+        run: |
+          LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
+          curl -s -X POST -H "Content-Type: application/json" \
+            -d "{\"content\": \"NEW! [VideoMaker][Frontend] deployed! Commit: $LAST_COMMIT_MESSAGE\"}" \
+            ${{ secrets.DISCORD_WEBHOOK_URL }}

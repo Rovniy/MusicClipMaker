@@ -2,7 +2,8 @@ name: Deploy Processor
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - master
     paths:
       - 'apps/processor/**'
       - 'infra/**'

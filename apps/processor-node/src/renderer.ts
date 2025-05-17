@@ -57,16 +57,16 @@ export function render(
 				'-shortest'
 			])
 			.output(outputPath)
-			.on('start', cmdLine => Logger.debug('FFmpeg command:', cmdLine))
-			.on('stderr', stderrLine => Logger.debug('FFmpeg stderr:', stderrLine))
+			.on('start', cmdLine => Logger.debug('FFmpeg command:', { cmdLine }))
+			.on('stderr', stderrLine => Logger.debug('FFmpeg stderr:', { stderrLine }))
 			.on('progress', p => {
 				const percent = Math.min(100, Math.floor(p.percent || 0))
 				updateJobProgress(jobId, percent).catch(Logger.error)
 			})
 			.on('error', (err, stdout, stderr) => {
-				Logger.error('✖ FFmpeg failed:', err.message)
-				Logger.error('ffmpeg stdout:', stdout)
-				Logger.error('ffmpeg stderr:', stderr)
+				Logger.error('✖ FFmpeg failed:', { message: err.message })
+				Logger.error('ffmpeg stdout:', { stdout })
+				Logger.error('ffmpeg stderr:', { stderr })
 				reject(err)
 			})
 			.on('end', () => {

@@ -60,7 +60,7 @@ export async function updateJobStatus(jobId: string, status: TJobStatus, videoUr
 
 	if (videoUrl) data.videoURL = videoUrl
 
-	Logger.debug(`updateJobStatus : jobId=${jobId}`, { status })
+	Logger.debug(`updateJobStatus : jobId=${jobId} : status=${status}`)
 
 	await docRef.update(data)
 }

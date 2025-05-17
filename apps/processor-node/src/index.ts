@@ -27,7 +27,7 @@ app.post('/', async (req: Request, res: Response) => {
 	if (!jobId) {
 		return res.status(400).send('Missing jobId in message')
 	}
-	Logger.debug('jobId', { jobId })
+	Logger.debug(`Got new job. jobId=${jobId}`)
 
 	await updateJobStatus(jobId, 'received_processor')
 
@@ -48,8 +48,8 @@ app.post('/', async (req: Request, res: Response) => {
 
 			// 2. Download sources
 			const { audioPath, coverPath } = await downloadSources(jobId)
-			Logger.debug('audioPath', { audioPath })
-			Logger.debug('coverPath', { coverPath })
+			Logger.debug(`Find audioPath : ${audioPath}`)
+			Logger.debug(`Find coverPath : ${coverPath}`)
 			if (!audioPath || !coverPath) throw new Error(
                 `Audio or cover not found for job ${jobId}`
 			)
@@ -58,7 +58,7 @@ app.post('/', async (req: Request, res: Response) => {
 
 			// 3. Render video
 			const outPath = `/tmp/${jobId}-out.mp4`
-			Logger.debug('outPath', { outPath })
+			Logger.debug(`Find outPath = ${outPath}`)
 			await updateJobStatus(jobId, 'processing')
 			await render(audioPath, coverPath, outPath, settings, jobId)
 
@@ -66,13 +66,13 @@ app.post('/', async (req: Request, res: Response) => {
 
 			// 4. Upload result
 			const videoUrl = await uploadResult(jobId, outPath)
-			Logger.debug('videoUrl', { videoUrl })
+			Logger.debug(`Video created. videoUrl = ${videoUrl}`)
 			if (!videoUrl) throw new Error('Video URL not found')
 
 			// 5. Finalize job
 			await updateJobStatus(jobId, 'done', videoUrl)
 		} catch (err) {
-			Logger.error('Processor error:', err)
+			Logger.error('INDEX : Processor error:', err)
 			await updateJobStatus(jobId, 'error')
 		}
 	}))

@@ -51,7 +51,7 @@ export function render(
             .outputOptions([
                 '-c:v libx264',
                 '-preset ultrafast',
-                '-threads 2',
+                '-threads 8',
                 '-r 15',
                 '-c:a aac',
                 '-shortest'

@@ -21,13 +21,13 @@ app.post('/', async (req: Request, res: Response) => {
 	}
 
 	const data = JSON.parse(Buffer.from(msg.data, 'base64').toString())
-	Logger.debug('Receive data', { data })
+	Logger.debug('INDEX : Receive data', { data })
 
 	const jobId: string = data.jobId
 	if (!jobId) {
 		return res.status(400).send('Missing jobId in message')
 	}
-	Logger.debug(`Got new job. jobId=${jobId}`)
+	Logger.debug(`INDEX : Got new job. jobId=${jobId}`)
 
 	await updateJobStatus(jobId, 'received_processor')
 
@@ -35,21 +35,21 @@ app.post('/', async (req: Request, res: Response) => {
 
 	setTimeout((async () => {
 		try {
-			Logger.debug('working in async')
+			Logger.debug('INDEX : working in async')
 
 			// 1. Get settings and mark processing
 			const settings = await getJobSettings(jobId)
 			if (!settings) throw new Error(
                 `Settings for job ${jobId} not found`
 			)
-			Logger.debug('Settings', settings)
+			Logger.debug('INDEX : Settings', settings)
 
 			await updateJobStatus(jobId, 'preparing_data')
 
 			// 2. Download sources
 			const { audioPath, coverPath } = await downloadSources(jobId)
-			Logger.debug(`Find audioPath : ${audioPath}`)
-			Logger.debug(`Find coverPath : ${coverPath}`)
+			Logger.debug(`INDEX : Find audioPath : ${audioPath}`)
+			Logger.debug(`INDEX : Find coverPath : ${coverPath}`)
 			if (!audioPath || !coverPath) throw new Error(
                 `Audio or cover not found for job ${jobId}`
 			)
@@ -58,7 +58,7 @@ app.post('/', async (req: Request, res: Response) => {
 
 			// 3. Render video
 			const outPath = `/tmp/${jobId}-out.mp4`
-			Logger.debug(`Find outPath = ${outPath}`)
+			Logger.debug(`INDEX : Find outPath = ${outPath}`)
 			await updateJobStatus(jobId, 'processing')
 			await render(audioPath, coverPath, outPath, settings, jobId)
 
@@ -66,7 +66,7 @@ app.post('/', async (req: Request, res: Response) => {
 
 			// 4. Upload result
 			const videoUrl = await uploadResult(jobId, outPath)
-			Logger.debug(`Video created. videoUrl = ${videoUrl}`)
+			Logger.debug(`INDEX : Video created. videoUrl = ${videoUrl}`)
 			if (!videoUrl) throw new Error('Video URL not found')
 
 			// 5. Finalize job

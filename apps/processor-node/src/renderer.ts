@@ -26,19 +26,16 @@ export function render(
             // на вход: обложка
             .input(coverPath)
             // если нужно делать ровно 8 сек, иначе полная длина
-            .inputOption(
-                settings.duration === 8
-                    ? ['-loop 1', `-t ${settings.duration}`]
-                    : ['-loop 1']
-            )
+            .loop(settings.duration === 8 ? 8 : null)
             // и аудио
             .input(audioPath)
+            .videoFilters(`scale=${settings.format === '9:16' ? '480:854' : '720:720'}`)
             // строим фильтр: showwaves + overlay
             .complexFilter([
                 {
                     filter: 'showwaves',
                     options: {
-                        s: '1080x400',
+                        s: '480x200',
                         mode: 'cline',
                         colors: 'white'
                     },
@@ -53,19 +50,15 @@ export function render(
             ])
             .outputOptions([
                 '-c:v libx264',
-                '-preset fast',
+                '-preset ultrafast',
+                '-threads 2',
+                '-r 15',
                 '-c:a aac',
                 '-shortest'
             ])
             .output(outputPath)
-            // логируем команду перед запуском
-            .on('start', cmdLine => {
-                Logger.info('FFmpeg command:', cmdLine);
-            })
-            // логируем каждую строку stderr
-            .on('stderr', stderrLine => {
-                Logger.info('FFmpeg stderr:', stderrLine);
-            })
+            .on('start', cmdLine => Logger.info('FFmpeg command:', cmdLine))
+            .on('stderr', stderrLine => Logger.info('FFmpeg stderr:', stderrLine))
             .on('progress', p => {
                 const percent = Math.min(100, Math.floor(p.percent || 0));
                 Logger.debug(`Rendering: ${percent}%`);

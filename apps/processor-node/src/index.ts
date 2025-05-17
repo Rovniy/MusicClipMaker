@@ -44,7 +44,7 @@ app.post('/', async (req: Request, res: Response) => {
             )
             Logger.debug('settings', settings);
 
-            await updateJobStatus(jobId, 'processing');
+            await updateJobStatus(jobId, 'preparing_data');
 
             // 2. Download sources
             const {audioPath, coverPath} = await downloadSources(jobId);
@@ -54,11 +54,15 @@ app.post('/', async (req: Request, res: Response) => {
                 `Audio or cover not found for job ${jobId}`
             )
 
+            await updateJobStatus(jobId, 'before_processing');
 
             // 3. Render video
             const outPath = `/tmp/${jobId}-out.mp4`;
             Logger.debug('outPath', outPath);
+            await updateJobStatus(jobId, 'processing');
             await render(audioPath, coverPath, outPath, settings, jobId);
+
+            await updateJobStatus(jobId, 'uploading');
 
             // 4. Upload result
             const videoUrl = await uploadResult(jobId, outPath);

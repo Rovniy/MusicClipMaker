@@ -1,6 +1,7 @@
 // apps/processor-node/src/storage.ts
 import os from 'os';
 import path from 'path';
+import fs from 'fs';
 import { Storage } from '@google-cloud/storage';
 import { Firestore, FieldValue } from '@google-cloud/firestore';
 import Logger from "./utils/logger";
@@ -10,14 +11,37 @@ const storage = new Storage();
 const bucket = storage.bucket(bucketName);
 const firestore = new Firestore();
 
+type TJobStatus = 'processing'
+    | 'done'
+    | 'error'
+    | 'received_processor'
+    | 'preparing_data'
+    | 'before_processing'
+    | 'uploading'
+
+async function downloadFile(src: string, dest: string): Promise<void> {
+    await new Promise<void>((resolve, reject) => {
+        const readStream = bucket.file(src).createReadStream();
+        const writeStream = fs.createWriteStream(dest);
+        readStream
+            .on('error', reject)
+            .pipe(writeStream)
+            .on('error', reject)
+            .on('finish', resolve)
+    });
+}
+
 /** Download audio and cover into tmp directory */
 export async function downloadSources(jobId: string): Promise<{ audioPath: string; coverPath: string }> {
     const tmpDir = os.tmpdir();
     const audioPath = path.join(tmpDir, `${jobId}-audio.mp3`);
     const coverPath = path.join(tmpDir, `${jobId}-cover.jpeg`);
 
-    await bucket.file(`uploads/${jobId}/audio.mp3`).download({ destination: audioPath });
-    await bucket.file(`uploads/${jobId}/cover.jpeg`).download({ destination: coverPath });
+    await Promise.all([
+        downloadFile(`uploads/${jobId}/audio.wav`, audioPath),
+        downloadFile(`uploads/${jobId}/cover.jpeg`, coverPath)
+    ]);
+
     return { audioPath, coverPath };
 }
 
@@ -31,7 +55,7 @@ export async function uploadResult(jobId: string, outputPath: string): Promise<s
 }
 
 /** Update job status in Firestore */
-export async function updateJobStatus(jobId: string, status: 'processing' | 'done' | 'error' | 'received_processor', videoUrl?: string): Promise<void> {
+export async function updateJobStatus(jobId: string, status: TJobStatus, videoUrl?: string): Promise<void> {
     const docRef = firestore.collection('jobs').doc(jobId);
     const data: any = { status, updatedAt: FieldValue.serverTimestamp() };
 

@@ -29,13 +29,13 @@ app.post('/', async (req: Request, res: Response) => {
     }
     Logger.debug('jobId', jobId);
 
+    await updateJobStatus(jobId, 'received_processor');
+
     res.status(204).json({ status: 'received_processor', jobId });
 
-    (async () => {
+    setTimeout((async () => {
         try {
             Logger.debug('working in async');
-
-            await updateJobStatus(jobId, 'received_processor');
 
             // 1. Get settings and mark processing
             const settings = await getJobSettings(jobId);
@@ -70,7 +70,7 @@ app.post('/', async (req: Request, res: Response) => {
             Logger.error('Processor error:', err);
             await updateJobStatus(jobId, 'error');
         }
-    })()
+    }))
 
     return ''
 });

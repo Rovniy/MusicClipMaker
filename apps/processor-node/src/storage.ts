@@ -37,7 +37,7 @@ export async function updateJobStatus(jobId: string, status: 'processing' | 'don
 
     if (videoUrl) data.videoURL = videoUrl;
 
-    Logger.debug('updateJobStatus : jobId=', jobId, 'status=', status, 'videoUrl=', videoUrl);
+    Logger.debug('updateJobStatus : jobId=', jobId, 'status=', status);
 
     await docRef.update(data);
 }

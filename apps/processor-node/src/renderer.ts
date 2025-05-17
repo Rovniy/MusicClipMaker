@@ -23,14 +23,14 @@ export function render(
     return new Promise((resolve, reject) => {
         const command = ffmpeg()
             .setFfmpegPath(ffmpegStatic)
-            // на вход: обложка
             .input(coverPath)
-            // если нужно делать ровно 8 сек, иначе полная длина
-            .loop(settings.duration === 8 ? 8 : null)
-            // и аудио
+            .inputOption(
+                settings.duration === 8
+                    ? ['-loop 1', `-t ${settings.duration}`]
+                    : ['-loop 1']
+            )
             .input(audioPath)
             .videoFilters(`scale=${settings.format === '9:16' ? '480:854' : '720:720'}`)
-            // строим фильтр: showwaves + overlay
             .complexFilter([
                 {
                     filter: 'showwaves',

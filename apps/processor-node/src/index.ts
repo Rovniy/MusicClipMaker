@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 8080;
 
+// @ts-ignore
 app.post('/', async (req: Request, res: Response) => {
     const envelope = req.body;
 
@@ -29,10 +30,12 @@ app.post('/', async (req: Request, res: Response) => {
     }
     Logger.debug('jobId', jobId);
 
-    res.sendStatus(204).json({ status: 'received_processor', jobId });
+    res.status(204).json({ status: 'received_processor', jobId });
 
-    return (async () => {
+    (async () => {
         try {
+            Logger.debug('working in async');
+
             await updateJobStatus(jobId, 'received_processor');
 
             // 1. Get settings and mark processing
@@ -63,16 +66,14 @@ app.post('/', async (req: Request, res: Response) => {
             if (!videoUrl) throw new Error('Video URL not found')
 
             // 5. Finalize job
-            return updateJobStatus(jobId, 'done', videoUrl);
+            await updateJobStatus(jobId, 'done', videoUrl);
         } catch (err) {
             Logger.error('Processor error:', err);
-
             await updateJobStatus(jobId, 'error');
-            return;
         }
     })()
 });
 
 app.listen(PORT, () => {
-    Logger.debug(`Processor service listening on port ${PORT}`);
+    Logger.info(`Processor service listening on port ${PORT}`);
 });

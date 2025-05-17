@@ -3,6 +3,7 @@ import os from 'os';
 import path from 'path';
 import { Storage } from '@google-cloud/storage';
 import { Firestore, FieldValue } from '@google-cloud/firestore';
+import Logger from "./utils/logger";
 
 const bucketName = process.env.GCS_BUCKET!;
 const storage = new Storage();
@@ -33,7 +34,11 @@ export async function uploadResult(jobId: string, outputPath: string): Promise<s
 export async function updateJobStatus(jobId: string, status: 'processing' | 'done' | 'error' | 'received_processor', videoUrl?: string): Promise<void> {
     const docRef = firestore.collection('jobs').doc(jobId);
     const data: any = { status, updatedAt: FieldValue.serverTimestamp() };
+
     if (videoUrl) data.videoURL = videoUrl;
+
+    Logger.debug('updateJobStatus : jobId=', jobId, 'status=', status, 'videoUrl=', videoUrl);
+
     await docRef.update(data);
 }
 

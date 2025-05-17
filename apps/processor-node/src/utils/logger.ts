@@ -3,7 +3,6 @@ import { Logging } from '@google-cloud/logging'
 
 type LoggerLevel = 'DEBUG' | 'INFO' | 'WARNING' | 'ERROR';
 
-/** Priority map to compare severities */
 const LEVEL_PRIORITY: Record<LoggerLevel, number> = {
 	DEBUG: 0,
 	INFO: 1,
@@ -11,18 +10,15 @@ const LEVEL_PRIORITY: Record<LoggerLevel, number> = {
 	ERROR: 3,
 }
 
-/** Minimum level to actually emit */
 const MIN_LEVEL = (
     (process.env.LOGGER_LEVEL || 'INFO').toUpperCase() as LoggerLevel
 )
 
-/** Name of the log in Cloud Logging */
 const LOG_NAME = process.env.LOG_NAME || 'PROCESSOR_NODE'
 
 const loggingClient = new Logging()
 const log = loggingClient.log(LOG_NAME)
 
-/** Should we emit messages at this level? */
 function shouldLog(level: LoggerLevel) {
 	return LEVEL_PRIORITY[level] >= LEVEL_PRIORITY[MIN_LEVEL]
 }

@@ -23,6 +23,8 @@ EXPOSE 8080
 
 ENV GCS_BUCKET=visualizationmaker-b8ff1.appspot.com
 ENV PORT=8080
+ENV LOGGER_LEVEL=DEBUG
+ENV LOG_NAME=PROCESSOR_NODE
 
 # ─── Запуск готового JS ───
 CMD ["node", "lib/index.js"]

@@ -2,6 +2,7 @@
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegStatic from 'ffmpeg-static';
 import { updateJobProgress } from './storage';
+import Logger from './utils/logger'
 
 export interface RenderSettings {
     duration: number | 'full';
@@ -59,25 +60,25 @@ export function render(
             .output(outputPath)
             // логируем команду перед запуском
             .on('start', cmdLine => {
-                console.log('FFmpeg command:', cmdLine);
+                Logger.info('FFmpeg command:', cmdLine);
             })
             // логируем каждую строку stderr
             .on('stderr', stderrLine => {
-                console.log('FFmpeg stderr:', stderrLine);
+                Logger.info('FFmpeg stderr:', stderrLine);
             })
             .on('progress', p => {
                 const percent = Math.min(100, Math.floor(p.percent || 0));
-                console.log(`Rendering: ${percent}%`);
-                updateJobProgress(jobId, percent).catch(console.error);
+                Logger.debug(`Rendering: ${percent}%`);
+                updateJobProgress(jobId, percent).catch(Logger.error);
             })
             .on('error', (err, stdout, stderr) => {
-                console.error('✖ FFmpeg failed:', err.message);
-                console.error('ffmpeg stdout:', stdout);
-                console.error('ffmpeg stderr:', stderr);
+                Logger.error('✖ FFmpeg failed:', err.message);
+                Logger.error('ffmpeg stdout:', stdout);
+                Logger.error('ffmpeg stderr:', stderr);
                 reject(err);
             })
             .on('end', () => {
-                console.log('✔ FFmpeg finished');
+                Logger.info('✔ FFmpeg finished');
                 resolve();
             });
 

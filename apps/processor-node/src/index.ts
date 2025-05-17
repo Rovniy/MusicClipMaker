@@ -5,6 +5,7 @@ import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import { downloadSources, uploadResult, updateJobStatus, getJobSettings } from './storage';
 import { render } from './renderer';
+import Logger from './utils/logger'
 
 const app = express();
 app.use(bodyParser.json());
@@ -20,49 +21,51 @@ app.post('/', async (req: Request, res: Response) => {
     }
 
     const data = JSON.parse(Buffer.from(msg.data, 'base64').toString());
+    Logger.debug('data', data);
 
     const jobId: string = data.jobId;
     if (!jobId) {
         return res.status(400).send('Missing jobId in message');
     }
+    Logger.debug('jobId', jobId);
 
-    console.log('jobId', jobId);
-
-    res.sendStatus(204).json({ status: 'processing', jobId });
+    res.sendStatus(204).json({ status: 'received_processor', jobId });
 
     return (async () => {
         try {
+            await updateJobStatus(jobId, 'received_processor');
+
             // 1. Get settings and mark processing
             const settings = await getJobSettings(jobId);
             if (!settings) throw new Error(
                 `Settings for job ${jobId} not found`
             )
-            console.log('settings', settings);
+            Logger.debug('settings', settings);
 
             await updateJobStatus(jobId, 'processing');
 
             // 2. Download sources
             const {audioPath, coverPath} = await downloadSources(jobId);
-            console.log('audioPath', audioPath);
-            console.log('coverPath', coverPath);
+            Logger.debug('audioPath', audioPath);
+            Logger.debug('coverPath', coverPath);
             if (!audioPath || !coverPath) throw new Error(
                 `Audio or cover not found for job ${jobId}`
             )
 
             // 3. Render video
             const outPath = `/tmp/${jobId}-out.mp4`;
-            console.log('outPath', outPath);
+            Logger.debug('outPath', outPath);
             await render(audioPath, coverPath, outPath, settings, jobId);
 
             // 4. Upload result
             const videoUrl = await uploadResult(jobId, outPath);
-            console.log('videoUrl', videoUrl);
+            Logger.debug('videoUrl', videoUrl);
             if (!videoUrl) throw new Error('Video URL not found')
 
             // 5. Finalize job
             return updateJobStatus(jobId, 'done', videoUrl);
         } catch (err) {
-            console.error('Processor error:', err);
+            Logger.error('Processor error:', err);
 
             await updateJobStatus(jobId, 'error');
             return;
@@ -71,5 +74,5 @@ app.post('/', async (req: Request, res: Response) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Processor service listening on port ${PORT}`);
+    Logger.debug(`Processor service listening on port ${PORT}`);
 });

@@ -15,9 +15,6 @@ export async function downloadSources(jobId: string): Promise<{ audioPath: strin
     const audioPath = path.join(tmpDir, `${jobId}-audio.mp3`);
     const coverPath = path.join(tmpDir, `${jobId}-cover.jpeg`);
 
-    console.log('Using bucket:', bucketName);
-    console.log('Downloading from:', `uploads/${jobId}/audio.mp3`);
-
     await bucket.file(`uploads/${jobId}/audio.mp3`).download({ destination: audioPath });
     await bucket.file(`uploads/${jobId}/cover.jpeg`).download({ destination: coverPath });
     return { audioPath, coverPath };
@@ -33,7 +30,7 @@ export async function uploadResult(jobId: string, outputPath: string): Promise<s
 }
 
 /** Update job status in Firestore */
-export async function updateJobStatus(jobId: string, status: 'processing' | 'done' | 'error', videoUrl?: string): Promise<void> {
+export async function updateJobStatus(jobId: string, status: 'processing' | 'done' | 'error' | 'received_processor', videoUrl?: string): Promise<void> {
     const docRef = firestore.collection('jobs').doc(jobId);
     const data: any = { status, updatedAt: FieldValue.serverTimestamp() };
     if (videoUrl) data.videoURL = videoUrl;

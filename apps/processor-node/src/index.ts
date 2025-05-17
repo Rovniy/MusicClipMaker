@@ -12,7 +12,6 @@ app.use(bodyParser.json());
 
 const PORT = process.env.PORT || 8080;
 
-// @ts-ignore
 app.post('/', async (req: Request, res: Response) => {
     const envelope = req.body;
 
@@ -72,6 +71,8 @@ app.post('/', async (req: Request, res: Response) => {
             await updateJobStatus(jobId, 'error');
         }
     })()
+
+    return ''
 });
 
 app.listen(PORT, () => {

@@ -1,6 +1,7 @@
 // apps/processor-node/src/renderer.ts
-import ffmpegPath from 'ffmpeg-static';
 import ffmpeg from 'fluent-ffmpeg';
+import ffmpegStatic from 'ffmpeg-static';
+import { updateJobProgress } from './storage';
 
 export interface RenderSettings {
     duration: number | 'full';
@@ -11,45 +12,75 @@ export interface RenderSettings {
     artist?: string;
 }
 
-export async function render(
+export function render(
     audioPath: string,
     coverPath: string,
     outputPath: string,
-    settings: RenderSettings
+    settings: RenderSettings,
+    jobId: string
 ): Promise<void> {
     return new Promise((resolve, reject) => {
-        ffmpeg()
-            .setFfmpegPath(ffmpegPath!)
-            .input(coverPath).loop()
+        const command = ffmpeg()
+            .setFfmpegPath(ffmpegStatic)
+            // на вход: обложка
+            .input(coverPath)
+            // если нужно делать ровно 8 сек, иначе полная длина
+            .inputOption(
+                settings.duration === 8
+                    ? ['-loop 1', `-t ${settings.duration}`]
+                    : ['-loop 1']
+            )
+            // и аудио
             .input(audioPath)
+            // строим фильтр: showwaves + overlay
             .complexFilter([
                 {
                     filter: 'showwaves',
-                    options: { s: '1080x400', mode: 'cline', colors: 'white' },
-                    inputs: '1:a', outputs: 'wave'
-                },
-                {
-                    filter: 'scale',
-                    options: getScale(settings.format),
-                    inputs: '0:v', outputs: 'bg'
+                    options: {
+                        s: '1080x400',
+                        mode: 'cline',
+                        colors: 'white'
+                    },
+                    inputs: '1:a',
+                    outputs: 'wave'
                 },
                 {
                     filter: 'overlay',
-                    options: { x: 0, y: 'main_h-400' },
-                    inputs: ['bg', 'wave'], outputs: 'vout'
+                    options: { y: '1520', format: 'auto' },
+                    inputs: ['0:v', 'wave']
                 }
-            ], 'vout')
-            .outputOptions(['-map [vout]', '-map 1:a', '-c:v libx264', '-preset fast', '-c:a aac', '-shortest'])
-            .save(outputPath)
-            .on('end', resolve)
-            .on('error', reject);
-    });
-}
+            ])
+            .outputOptions([
+                '-c:v libx264',
+                '-preset fast',
+                '-c:a aac',
+                '-shortest'
+            ])
+            .output(outputPath)
+            // логируем команду перед запуском
+            .on('start', cmdLine => {
+                console.log('FFmpeg command:', cmdLine);
+            })
+            // логируем каждую строку stderr
+            .on('stderr', stderrLine => {
+                console.log('FFmpeg stderr:', stderrLine);
+            })
+            .on('progress', p => {
+                const percent = Math.min(100, Math.floor(p.percent || 0));
+                console.log(`Rendering: ${percent}%`);
+                updateJobProgress(jobId, percent).catch(console.error);
+            })
+            .on('error', (err, stdout, stderr) => {
+                console.error('✖ FFmpeg failed:', err.message);
+                console.error('ffmpeg stdout:', stdout);
+                console.error('ffmpeg stderr:', stderr);
+                reject(err);
+            })
+            .on('end', () => {
+                console.log('✔ FFmpeg finished');
+                resolve();
+            });
 
-function getScale(format: RenderSettings['format']): string {
-    switch (format) {
-        case '9:16': return '1080:1920';
-        case '1:1': return '1080:1080';
-        case '16:9': return '1920:1080';
-    }
+        command.run();
+    });
 }

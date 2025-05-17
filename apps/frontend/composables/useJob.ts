@@ -9,6 +9,7 @@ export function useJob() {
     const status = ref<'queued'|'uploaded'|'processing'|'done'|null>(null)
     const videoUrl = ref<string|null>(null)
     const error = ref<string|null>(null)
+    const progress = ref<number>(0)
     const router = useRouter()
     const db = getFirestore()
 
@@ -64,6 +65,7 @@ export function useJob() {
             const data = snap.data()
             if (!data) return
             status.value = data.status
+            progress.value = data.progress ?? 0;
             if (data.status === 'done' && data.videoURL) {
                 videoUrl.value = data.videoURL
             }

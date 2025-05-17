@@ -23,6 +23,11 @@
       </button>
     </form>
 
+    <div v-if="status==='processing'">
+      <p>Прогресс: {{ progress }}%</p>
+      <progress :value="progress" max="100"></progress>
+    </div>
+
     <div v-if="status">
       <p>Статус: {{ status }}</p>
       <video v-if="videoUrl" :src="videoUrl" controls class="mt-4 w-full"></video>

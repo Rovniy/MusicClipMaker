@@ -51,18 +51,19 @@ export function render(
 		const command = ffmpeg()
 			.setFfmpegPath(ffmpegStatic)
 			.input(coverPath)
-			.inputOption(
-				settings.duration === 8
-					? [ '-loop 1', `-t ${settings.duration}` ]
-					: [ '-loop 1' ]
-			)
+			// .inputOption(
+			// 	settings.duration === 8
+			// 		? [ '-loop 1', `-t ${isDev ? 0.2 : settings.duration}` ]
+			// 		: [ '-loop 1' ]
+			// )
+			.inputOption([ '-loop 1', `-t 1` ])
 			.input(audioPath)
 			.complexFilter(filters)
 			.outputOptions([
 				'-c:v libx264',
 				'-preset ultrafast',
 				'-threads 8',
-				'-r 15',
+				'-r 5',
 				'-c:a aac',
 				'-shortest'
 			])

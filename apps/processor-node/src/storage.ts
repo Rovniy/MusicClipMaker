@@ -38,7 +38,7 @@ export async function downloadSources(jobId: string): Promise<{ audioPath: strin
     const coverPath = path.join(tmpDir, `${jobId}-cover.jpeg`);
 
     await Promise.all([
-        downloadFile(`uploads/${jobId}/audio.wav`, audioPath),
+        downloadFile(`uploads/${jobId}/audio.mp3`, audioPath),
         downloadFile(`uploads/${jobId}/cover.jpeg`, coverPath)
     ]);
 

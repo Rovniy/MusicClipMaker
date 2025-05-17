@@ -38,7 +38,7 @@ export const createJob = functions
                 });
 
             const [coverUpload] = await storage
-                .file(`uploads/${jobRef.id}/cover.jpg`)
+                .file(`uploads/${jobRef.id}/cover.jpeg`)
                 .getSignedUrl({
                     version: "v4",
                     action: "write",

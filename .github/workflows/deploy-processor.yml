@@ -59,5 +59,5 @@ jobs:
         run: |
           LAST_COMMIT_MESSAGE=$(git log -1 --pretty=%B)
           curl -s -X POST -H "Content-Type: application/json" \
-            -d "{\"content\": \"NEW! [VideoMaker][Processor] deployed! Commit: $LAST_COMMIT_MESSAGE\"}" \
+            -d "{\"content\": \"💽 [VideoMaker][Processor] deployed! Commit: $LAST_COMMIT_MESSAGE\"}" \
             ${{ secrets.DISCORD_WEBHOOK_URL }}

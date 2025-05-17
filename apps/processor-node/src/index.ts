@@ -54,6 +54,7 @@ app.post('/', async (req: Request, res: Response) => {
                 `Audio or cover not found for job ${jobId}`
             )
 
+
             // 3. Render video
             const outPath = `/tmp/${jobId}-out.mp4`;
             Logger.debug('outPath', outPath);

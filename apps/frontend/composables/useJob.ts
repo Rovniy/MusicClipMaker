@@ -15,8 +15,16 @@ export function useJob() {
 
     // 1️⃣ Создать задачу
     async function createJob(userId: string, settings: any) {
-        const res = await $fetch('https://createjob-wvazgkkkrq-uc.a.run.app', {
+        const { $auth } = useNuxtApp()
+
+        const idToken = await $auth.currentUser?.getIdToken()
+
+        type TResponse = { jobId: string; uploadUrls: { audio: string; cover: string } }
+        const res : TResponse = await $fetch('https://createjob-wvazgkkkrq-uc.a.run.app', {
             method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${idToken}`
+            },
             body: { userId, settings },
         })
         jobId.value = res.jobId

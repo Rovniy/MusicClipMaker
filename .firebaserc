@@ -1,7 +1,7 @@
 {
   "projects": {
-      "default": "visualizationmaker-b8ff1",
-      "prod": "visualizationmaker-b8ff1",
-      "dev": "visualizationmaker-b8ff1"
+    "default": "visualizationmaker-b8ff1",
+    "prod": "visualizationmaker-b8ff1",
+    "dev": "visualizationmaker-b8ff1"
   }
 }

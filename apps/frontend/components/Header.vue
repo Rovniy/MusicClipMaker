@@ -1,66 +1,48 @@
 <template>
   <header class="header">
-    <NuxtLink to="/" class="logotype">
-      <NuxtImg src="/misc/logo.svg" alt="logo" class="logo" width="160" height="26" />
-    </NuxtLink>
+    <div class="logo_area">
+      <UiLogo />
+    </div>
 
-    <div class="social">
-      <NuxtLink :to="contacts.telegramLink" class="icon" rel="noreferrer" target="_blank">
-        <NuxtImg src="/misc/telegram.svg" alt="telegram" />
-      </NuxtLink>
+    <div class="menu_area">
+      <NuxtLink to="/dashboard" class="link">Create</NuxtLink>
+      <NuxtLink to="/about" class="link">About</NuxtLink>
+      <NuxtLink to="/login" class="link">Login</NuxtLink>
+      <NuxtLink to="/pricing" class="link">Pricing</NuxtLink>
+      <NuxtLink to="/settings" class="link">Settings</NuxtLink>
+    </div>
+
+    <div class="login_area">
+      <LayoutProfile />
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
-import { contacts } from '~/config'
 </script>
 
 <style scoped lang="sass">
 .header
-  padding: 0 20px
+  $height: 68px
+
+  background: var(--uicolor-dark)
   width: 100%
-  height: var(--header_height)
-  display: flex
-  align-items: center
-  justify-content: flex-start
-  position: relative
-  +desktop
-    justify-content: center
-    --header_height: 100px
+  +flex_space_between
+  padding: 30px
 
-  .logotype
-    width: 160px
-    line-height: 0
-    transition: filter .15s ease-in-out
+  .menu_area
+    padding: 10px 20px
+    height: $height
+    border-radius: $height
+    +flex_center
+    gap: 10px
 
-    .logo
-      width: 100%
-
-    &:hover
-      filter: brightness(1.4)
-
-  .social
-    position: absolute
-    top: 0
-    right: 20px
-    height: var(--header_height)
-    display: flex
-    align-items: center
-    justify-content: flex-end
-    gap: 20px
-    +desktop
-      right: 40px
-
-    .icon
-      width: 40px
-      height: 40px
-
-      img
-        width: 100%
-        height: 100%
+    .link
+      padding: 10px 20px
+      color: var(--uicolor-white)
+      text-decoration: none
 
       &:hover
-        img
-          filter: brightness(2)
+        color: var(--uicolor-lightblue)
+        text-decoration: none
 </style>

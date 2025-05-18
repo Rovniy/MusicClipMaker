@@ -12,6 +12,10 @@ export const createJob = functions
                 return;
             }
 
+            const idToken = req.get('Authorization')?.split('Bearer ')[1]
+            const decoded = await admin.auth().verifyIdToken(idToken)
+            const uid : string = decoded.uid
+
             const {userId, settings} = req.body;
             if (!userId || !settings) {
                 res.status(400).send("Missing parameters");
@@ -24,6 +28,7 @@ export const createJob = functions
             const jobRef = await db.collection("jobs").add({
                 userId,
                 settings,
+                createdBy: uid,
                 status: "queued",
                 createdAt: FieldValue.serverTimestamp(),
             });

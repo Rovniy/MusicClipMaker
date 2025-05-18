@@ -1,6 +1,10 @@
-import {meta} from './config'
+import { common } from './config/index'
+import {fileURLToPath} from "node:url";
 
 export default defineNuxtConfig({
+    alias: {
+        '#config': fileURLToPath(new URL('./config', import.meta.url)),
+    },
     app: {
         head: {
             htmlAttrs: {
@@ -8,21 +12,21 @@ export default defineNuxtConfig({
             },
             meta: [
                 {property: 'og:locale', content: 'en_US'},
-                {property: 'og:site_name', content: meta.siteName},
-                {property: 'og:logo', content: `${meta.domain}/xploit_logo.png`},
-                {property: 'og:url', content: meta.domain},
+                {property: 'og:site_name', content: common.meta.siteName},
+                {property: 'og:logo', content: `${common.meta.domain}/xploit_logo.png`},
+                {property: 'og:url', content: common.meta.domain},
                 {property: 'og:type', content: 'website'},
-                {property: 'og:title', content: meta.title},
-                {property: 'og:description', content: meta.description},
-                {property: 'og:image', content: `${meta.domain}/xploit_og.jpg`},
+                {property: 'og:title', content: common.meta.title},
+                {property: 'og:description', content: common.meta.description},
+                {property: 'og:image', content: `${common.meta.domain}/xploit_og.jpg`},
                 {property: 'og:image:width', content: '1200'},
                 {property: 'og:image:height', content: '630'},
                 {property: 'twitter:card', content: 'summary_large_image'},
-                {property: 'twitter:domain', content: meta.domain},
-                {property: 'twitter:url', content: meta.domain},
+                {property: 'twitter:domain', content: common.meta.domain},
+                {property: 'twitter:url', content: common.meta.domain},
                 {property: 'twitter:title', content: 'XPLOIT ltd.'},
-                {property: 'twitter:description', content: meta.description},
-                {property: 'twitter:image', content: `${meta.domain}/xploit_og.jpg`}
+                {property: 'twitter:description', content: common.meta.description},
+                {property: 'twitter:image', content: `${common.meta.domain}/xploit_og.jpg`}
             ]
         }
     },

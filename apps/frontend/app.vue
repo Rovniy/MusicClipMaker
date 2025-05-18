@@ -1,10 +1,10 @@
 <script setup>
-import {meta} from '~/config'
+import { common } from '~/config'
 
 useHead({
-  titleTemplate: (title) => (title ? `${title} | ${meta.siteName}` : meta.siteName),
+  titleTemplate: (title) => (title ? `${title} | ${common.meta.siteName}` : common.meta.siteName),
   meta: [
-    { name: 'author', content: meta.author }
+    { name: 'author', content: common.meta.author }
   ]
 });
 </script>

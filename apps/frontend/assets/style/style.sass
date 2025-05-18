@@ -1,13 +1,13 @@
 @font-face
-  font-family: "Parkinsans"
-  src: url("../fonts/parkinsans.ttf") format("truetype")
+  font-family: "Space Grotesk"
+  src: url("../fonts/space_grotesk.ttf") format("truetype")
   font-style: normal
   font-weight: 400
   font-display: swap
 
 @font-face
-  font-family: "Parkinsans"
-  src: url("../fonts/parkinsans.ttf") format("truetype")
+  font-family: "Space Grotesk"
+  src: url("../fonts/space_grotesk.ttf") format("truetype")
   font-style: italic
   font-weight: 400
   font-display: swap
@@ -27,33 +27,49 @@ html, body
   box-sizing: border-box
 
 h1
-  font: 700 24px/32px var(--main-font)
+  font: 700 28px/120% var(--main-font)
   margin: 20px 0
+  +tablet
+    font: 700 48px/120% var(--main-font)
   +desktop
-    font: 700 40px/48px var(--main-font)
+    font: 700 58px/120% var(--main-font)
 
 h2
-  font: 700 32px/36px var(--main-font)
+  font: 700 28px/120% var(--main-font)
   margin: 20px 0
+  +tablet
+    font: 700 38px/120% var(--main-font)
+  +desktop
+    font: 700 5848/120% var(--main-font)
 
 h3
-  font: 700 28px/32px var(--main-font)
+  font: 700 28px/120% var(--main-font)
   margin: 20px 0
+  +tablet
+    font: 700 30px/120% var(--main-font)
+  +desktop
+    font: 700 38px/120% var(--main-font)
 
 h4
-  font: 700 24px/28px var(--main-font)
+  font: 400 20px/120% var(--main-font)
   margin: 20px 0
+  +desktop
+    font: 400 24px/120% var(--main-font)
 
 h5
-  font: 700 20px/24px var(--main-font)
+  font: 400 16px/120% var(--main-font)
   margin: 20px 0
+  +tablet
+    font: 400 18px/120% var(--main-font)
+  +desktop
+    font: 400 22px/120% var(--main-font)
 
 p, span, a, blockquote
-  font: 400 16px/22px var(--main-font)
-
-.document_wrapper
-  h1, h2, h3, h4, h5, p, span, ul, li, ol, a
-    color: var(--uicolor-white)
+  font: 400 15px/150% var(--main-font)
+  +tablet
+    font: 400 16px/150% var(--main-font)
+  +desktop
+    font: 400 18px/150% var(--main-font)
 
 .container
   width: 100%
@@ -65,3 +81,6 @@ p, span, a, blockquote
   text-align: center
   +desktop
     padding: 40px 20px
+
+.firebase-emulator-warning
+  display: none

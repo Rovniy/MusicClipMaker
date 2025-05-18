@@ -5,7 +5,9 @@
 <template>
   <Header />
 
-  <NuxtPage />
+  <div class="container">
+    <NuxtPage />
+  </div>
 
   <Footer />
 </template>

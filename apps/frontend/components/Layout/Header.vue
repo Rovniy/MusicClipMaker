@@ -23,7 +23,6 @@
 .header
   $height: 68px
 
-  background: var(--uicolor-dark)
   width: 100%
   +flex_space_between
   padding: 20px 30px

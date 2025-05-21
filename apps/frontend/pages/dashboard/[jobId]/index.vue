@@ -1,13 +1,14 @@
+<template>
+  <div class="container">
+    <h1>Job id page</h1>
+  </div>
+</template>
+
 <script setup lang="ts">
 definePageMeta({
   middleware: 'auth'
 })
 </script>
-
-<template>
-  <h1>Job id page</h1>
-
-</template>
 
 <style scoped>
 

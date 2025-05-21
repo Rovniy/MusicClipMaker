@@ -1,12 +1,5 @@
-<script setup lang="ts">
-
-</script>
-
 <template>
-  <h1>Pricing</h1>
-
+  <div class="container">
+    <h1>Pricing</h1>
+  </div>
 </template>
-
-<style scoped>
-
-</style>

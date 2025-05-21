@@ -1,39 +1,41 @@
 <template>
-  <div class="max-w-xl mx-auto p-4">
-    <h1 class="text-xl font-bold mb-4">Создать видео</h1>
+  <div class="container">
+    <div class="max-w-xl mx-auto p-4">
+      <h1 class="text-xl font-bold mb-4">Создать видео</h1>
 
-    <form @submit.prevent="onSubmit">
-      <label>Аудио</label>
-      <input type="file" accept="audio/*" @change="onAudio" required />
+      <form @submit.prevent="onSubmit">
+        <label>Аудио</label>
+        <input type="file" accept="audio/*" @change="onAudio" required />
 
-      <label>Обложка</label>
-      <input type="file" accept="image/*" @change="onCover" required />
+        <label>Обложка</label>
+        <input type="file" accept="image/*" @change="onCover" required />
 
-      <!-- Пример одного из настроек -->
-      <label>Длительность</label>
-      <select v-model="settings.duration">
-        <option value="8">8 сек</option>
-        <option value="full">Полная длина трека</option>
-      </select>
+        <!-- Пример одного из настроек -->
+        <label>Длительность</label>
+        <select v-model="settings.duration">
+          <option value="8">8 сек</option>
+          <option value="full">Полная длина трека</option>
+        </select>
 
-      <!-- Добавьте остальные настройки: формат кадра, тема, звук on/off, текст -->
+        <!-- Добавьте остальные настройки: формат кадра, тема, звук on/off, текст -->
 
-      <button type="submit" :disabled="isWorking" class="mt-4 btn">
-        {{ isWorking ? 'Загрузка...' : 'Создать' }}
-      </button>
-    </form>
+        <button type="submit" :disabled="isWorking" class="mt-4 btn">
+          {{ isWorking ? 'Загрузка...' : 'Создать' }}
+        </button>
+      </form>
 
-    <div v-if="status==='processing'">
-      <p>Прогресс: {{ progress }}%</p>
-      <progress :value="progress" max="100"></progress>
+      <div v-if="status==='processing'">
+        <p>Прогресс: {{ progress }}%</p>
+        <progress :value="progress" max="100"></progress>
+      </div>
+
+      <div v-if="status">
+        <p>Статус: {{ status }}</p>
+        <video v-if="videoUrl" :src="videoUrl" controls class="mt-4 w-full"></video>
+      </div>
+
+      <p v-if="error" class="text-red-600">{{ error }}</p>
     </div>
-
-    <div v-if="status">
-      <p>Статус: {{ status }}</p>
-      <video v-if="videoUrl" :src="videoUrl" controls class="mt-4 w-full"></video>
-    </div>
-
-    <p v-if="error" class="text-red-600">{{ error }}</p>
   </div>
 </template>
 

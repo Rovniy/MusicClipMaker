@@ -5,8 +5,9 @@
       :class="[
         'ui_button',
         props.type,
-        { 'arrow': props.arrow },
         {
+          with_avatar: props.image,
+          arrow: props.arrow,
           disabled: props.disabled,
           loading: props.loading,
         }
@@ -130,13 +131,17 @@ const targetComponent = computed(() => {
     .circle
       +flex_center
 
+  &.with_avatar
+    padding: 10px 10px 10px 20px
+
+    .circle
+      +flex_center
+
   &.secondary
     background: var(--uicolor-white)
 
     span
       color: var(--uicolor-black)
-
-
 
   &:hover
     background: var(--uicolor-lightblue)

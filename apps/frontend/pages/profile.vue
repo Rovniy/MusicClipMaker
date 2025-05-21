@@ -1,3 +1,11 @@
+<template>
+  <div class="container">
+    <h1>Profile</h1>
+
+    <UiButton @click="signOutLogic">Sign out</UiButton>
+  </div>
+</template>
+
 <script setup lang="ts">
 const signOutLogic = async () => {
   await useAuthStore().signOut()
@@ -8,11 +16,7 @@ definePageMeta({
 })
 </script>
 
-<template>
-  <h1>Profile</h1>
 
-  <UiButton @click="signOutLogic">Sign out</UiButton>
-</template>
 
 <style scoped>
 

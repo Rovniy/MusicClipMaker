@@ -4,7 +4,7 @@
 
     <div class="btns_area" v-else>
       <UiButton text="Login" href="/login" type="secondary" />
-      <UiButton text="Try it for free" href="/login" arrow />
+      <UiButton text="Try for free" href="/login" arrow />
     </div>
   </div>
 </template>

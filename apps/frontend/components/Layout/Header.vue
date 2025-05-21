@@ -26,7 +26,7 @@
   background: var(--uicolor-dark)
   width: 100%
   +flex_space_between
-  padding: 30px
+  padding: 20px 30px
 
   .menu_area
     padding: 10px 20px

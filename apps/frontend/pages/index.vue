@@ -1,10 +1,9 @@
 <template>
-  <h1>Index</h1>
+  <PageIndexSectionHero />
+  <PageIndexSectionWhy />
+  <PageIndexSectionHowItWork />
+  <PageIndexSectionArtwork />
+  <LazyPageIndexSectionSayingAboutUs />
+  <LazyPageIndexSectionFaq />
+  <LazyPageIndexSectionSeoText />
 </template>
-
-<script setup lang="ts">
-
-</script>
-
-<style scoped>
-</style>

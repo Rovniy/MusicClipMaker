@@ -1,16 +1,4 @@
-@font-face
-  font-family: "Space Grotesk"
-  src: url("../fonts/space_grotesk.ttf") format("truetype")
-  font-style: normal
-  font-weight: 400
-  font-display: swap
-
-@font-face
-  font-family: "Space Grotesk"
-  src: url("../fonts/space_grotesk.ttf") format("truetype")
-  font-style: italic
-  font-weight: 400
-  font-display: swap
+@use "fonts" as *
 
 html, body
   margin: 0
@@ -71,6 +59,15 @@ p, span, a, blockquote
   +desktop
     font: 400 18px/150% var(--main-font)
 
+  &.small
+    font-size: 12px
+    line-height: 150%
+    +tablet
+      font-size: 14px
+    +desktop
+      font-size: 16px
+
+
 ul
   margin: 0 0 40px 0
 
@@ -100,5 +97,18 @@ a
   +desktop
     padding: 40px 20px
 
+.section
+  width: 100%
+  margin: 0
+  padding: 20px
+  position: relative
+  overflow: hidden
+
 .firebase-emulator-warning
   display: none
+
+.highlighted
+  color: var(--uicolor-lightblue)
+
+.place-content-center
+  width: 100%

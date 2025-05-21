@@ -3,13 +3,11 @@
 </script>
 
 <template>
-  <Header />
+  <LayoutHeader />
 
-  <div class="container">
-    <NuxtPage />
-  </div>
+  <NuxtPage />
 
-  <Footer />
+  <LazyLayoutFooter />
 </template>
 
 <style scoped>

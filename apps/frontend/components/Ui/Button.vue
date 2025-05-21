@@ -47,7 +47,7 @@ interface IProps {
   disabled?: boolean
   loading?: boolean
   image?: string | undefined,
-  arrow: boolean
+  arrow?: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -121,10 +121,6 @@ const targetComponent = computed(() => {
     min-width: $size
     object-fit: cover
 
-
-  &.secondary
-    background: var(--uicolor-white)
-
   &.arrow
     padding: 10px 10px 10px 20px
 
@@ -133,6 +129,14 @@ const targetComponent = computed(() => {
 
     .circle
       +flex_center
+
+  &.secondary
+    background: var(--uicolor-white)
+
+    span
+      color: var(--uicolor-black)
+
+
 
   &:hover
     background: var(--uicolor-lightblue)

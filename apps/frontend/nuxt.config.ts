@@ -11,6 +11,7 @@ export default defineNuxtConfig({
                 lang: 'en',
             },
             meta: [
+                {property: 'robots', content: 'noindex, nofollow'}, // TODO Выпилить перед релизом
                 {property: 'og:locale', content: 'en_US'},
                 {property: 'og:site_name', content: common.meta.siteName},
                 {property: 'og:logo', content: `${common.meta.domain}/xploit_logo.png`},

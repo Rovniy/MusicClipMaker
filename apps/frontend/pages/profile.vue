@@ -1,6 +1,8 @@
 <script setup lang="ts">
-const { signOut } = useAuth()
-
+const signOutLogic = async () => {
+  await useAuthStore().signOut()
+  return useRouter().push('/')
+}
 definePageMeta({
   middleware: [ 'auth' ]
 })
@@ -9,7 +11,7 @@ definePageMeta({
 <template>
   <h1>Profile</h1>
 
-  <UiButton @click="signOut">Sign out</UiButton>
+  <UiButton @click="signOutLogic">Sign out</UiButton>
 </template>
 
 <style scoped>

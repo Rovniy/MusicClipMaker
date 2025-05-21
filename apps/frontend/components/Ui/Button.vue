@@ -5,6 +5,7 @@
       :class="[
         'ui_button',
         props.type,
+        { 'arrow': props.arrow },
         {
           disabled: props.disabled,
           loading: props.loading,
@@ -15,7 +16,9 @@
 
     <span v-if="props.text" class="text" v-html="props.text"/>
 
-    <slot/>
+    <span class="text" v-else>
+      <slot/>
+    </span>
 
     <div class="circle">
       <img :src="props.image" class="avatar" v-if="props?.image" alt="avatar" />
@@ -39,11 +42,12 @@ const emit = defineEmits([ 'click' ])
 
 interface IProps {
   text?: string | undefined
-  type?: 'default' | 'transparent' | 'ghost'
+  type?: 'default' | 'secondary' | 'ghost'
   link?: string | undefined
   disabled?: boolean
   loading?: boolean
-  image?: string | undefined
+  image?: string | undefined,
+  arrow: boolean
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -52,7 +56,8 @@ const props = withDefaults(defineProps<IProps>(), {
   link: undefined,
   disabled: false,
   loading: false,
-  image: undefined
+  image: undefined,
+  arrow: false
 })
 
 const btnLink = computed(() => props.link ? props.link : '#')
@@ -70,7 +75,7 @@ const targetComponent = computed(() => {
   $arrow_size: 20px
 
   +flex_center
-  padding: 10px 10px 10px 20px
+  padding: 10px 20px
   height: var(--height)
   border-radius: var(--height)
   background: var(--uicolor-lightblue)
@@ -87,17 +92,18 @@ const targetComponent = computed(() => {
     height: $size
     background: var(--uicolor-black)
     border-radius: 50%
-    +flex_center
+    display: none
     overflow: hidden
     position: relative
 
     .top_layer, .bottom_layer
       position: absolute
-      top: calc((#{$size} - #{$arrow_size}) / 2)
-      left: calc((#{$size} - #{$arrow_size}) / 2)
+      top: 0
+      left: 0
       width: $size
       height: $size
       transition: all 0.3s ease-in-out
+      +flex_center
 
       .arrow
         width: $arrow_size
@@ -110,11 +116,37 @@ const targetComponent = computed(() => {
       transform: translateX(-$size) translateY($size)
 
 
+  .avatar
+    min-height: $size
+    min-width: $size
+    object-fit: cover
+
+
+  &.secondary
+    background: var(--uicolor-white)
+
+  &.arrow
+    padding: 10px 10px 10px 20px
+
+    span
+      color: var(--uicolor-white)
+
+    .circle
+      +flex_center
+
   &:hover
+    background: var(--uicolor-lightblue)
+
+    span
+      color: var(--uicolor-white)
+
     .circle
       .top_layer
         transform: translateX($size) translateY(-$size)
 
       .bottom_layer
         transform: translateX(0) translateY(0)
+
+    &.arrow
+      background: var(--uicolor-lightblue)
 </style>

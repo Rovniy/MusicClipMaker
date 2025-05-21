@@ -6,10 +6,8 @@
 
     <div class="menu_area">
       <NuxtLink to="/dashboard" class="link">Create</NuxtLink>
-      <NuxtLink to="/about" class="link">About</NuxtLink>
-      <NuxtLink to="/login" class="link">Login</NuxtLink>
       <NuxtLink to="/pricing" class="link">Pricing</NuxtLink>
-      <NuxtLink to="/settings" class="link">Settings</NuxtLink>
+      <NuxtLink to="/about" class="link">About</NuxtLink>
     </div>
 
     <div class="login_area">

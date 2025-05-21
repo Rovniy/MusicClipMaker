@@ -1,6 +1,10 @@
 <script setup>
 import { common } from '~/config'
 
+onMounted(() => {
+  useAuthStore().initAuth()
+})
+
 useHead({
   titleTemplate: (title) => (title ? `${title} | ${common.meta.siteName}` : common.meta.siteName),
   meta: [

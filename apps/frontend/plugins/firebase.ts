@@ -3,7 +3,6 @@ import { getAuth, connectAuthEmulator } from 'firebase/auth'
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore'
 import { common } from '#config'
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions'
-import { getDatabase, connectDatabaseEmulator } from 'firebase/database'
 import { getStorage, connectStorageEmulator } from 'firebase/storage'
 
 export default defineNuxtPlugin(nuxtApp => {
@@ -23,7 +22,6 @@ export default defineNuxtPlugin(nuxtApp => {
     const authInstance = getAuth(app)
     const firestoreInstance = getFirestore()
     const functionsInstance = getFunctions(app)
-    const databaseInstance = getDatabase(app)
     const storageInstance = getStorage(app)
 
     if (common.isDev) {
@@ -32,7 +30,6 @@ export default defineNuxtPlugin(nuxtApp => {
         connectAuthEmulator(authInstance, `http://${_HOST}:9099`)
         connectFunctionsEmulator(functionsInstance, _HOST, 5001)
         connectFirestoreEmulator(firestoreInstance, _HOST, 8080)
-        connectDatabaseEmulator(databaseInstance, _HOST, 9000)
         connectStorageEmulator(storageInstance, _HOST, 9199)
     }
 
@@ -44,9 +41,6 @@ export default defineNuxtPlugin(nuxtApp => {
 
     nuxtApp.vueApp.provide('functions', functionsInstance)
     nuxtApp.provide('functions', functionsInstance)
-
-    nuxtApp.vueApp.provide('database', databaseInstance)
-    nuxtApp.provide('database', databaseInstance)
 
     nuxtApp.vueApp.provide('storage', storageInstance)
     nuxtApp.provide('storage', storageInstance)

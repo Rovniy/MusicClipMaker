@@ -28,7 +28,7 @@ html, body
 
 h1
   font: 700 28px/120% var(--main-font)
-  margin: 20px 0
+  margin: var(--heading_margin)
   +tablet
     font: 700 48px/120% var(--main-font)
   +desktop
@@ -36,15 +36,15 @@ h1
 
 h2
   font: 700 28px/120% var(--main-font)
-  margin: 20px 0
+  margin: var(--heading_margin)
   +tablet
     font: 700 38px/120% var(--main-font)
   +desktop
-    font: 700 5848/120% var(--main-font)
+    font: 700 48px/120% var(--main-font)
 
 h3
   font: 700 28px/120% var(--main-font)
-  margin: 20px 0
+  margin: var(--heading_margin)
   +tablet
     font: 700 30px/120% var(--main-font)
   +desktop
@@ -52,13 +52,13 @@ h3
 
 h4
   font: 400 20px/120% var(--main-font)
-  margin: 20px 0
+  margin: var(--heading_margin)
   +desktop
     font: 400 24px/120% var(--main-font)
 
 h5
   font: 400 16px/120% var(--main-font)
-  margin: 20px 0
+  margin: var(--heading_margin)
   +tablet
     font: 400 18px/120% var(--main-font)
   +desktop
@@ -71,6 +71,24 @@ p, span, a, blockquote
   +desktop
     font: 400 18px/150% var(--main-font)
 
+ul
+  margin: 0 0 40px 0
+
+  li
+    list-style: none
+    margin: 0 0 40px 0
+
+hr
+  background: var(--uicolor-dark-gray)
+  margin: 40px 0
+
+a
+  color: var(--uicolor-lightblue)
+  text-decoration: none
+
+  &:hover
+    text-decoration: underline
+
 .container
   width: 100%
   max-width: 1200px
@@ -78,7 +96,7 @@ p, span, a, blockquote
   padding: 20px
   height: 100%
   flex-grow: 1
-  text-align: center
+  text-align: left
   +desktop
     padding: 40px 20px
 

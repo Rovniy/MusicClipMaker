@@ -33,7 +33,10 @@ export default defineNuxtConfig({
 
     devtools: {enabled: true},
 
-    modules: ['@nuxt/image'],
+    modules: [
+        '@pinia/nuxt',
+        '@nuxt/image'
+    ],
 
     compatibilityDate: '2025-08-05',
 

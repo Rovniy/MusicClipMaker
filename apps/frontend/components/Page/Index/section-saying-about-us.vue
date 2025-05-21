@@ -1,8 +1,8 @@
 <template>
   <section class="section  why">
     <div class="container">
-      <h2 class="title">Why AltCover?</h2>
-      <h4 class="desc">The simplest way to create stunning visualizers for your music</h4>
+      <h2 class="title">What creators are saying</h2>
+      <h4 class="desc">Join thousands of musicians who are using AltCover to promote their music</h4>
 
       <div class="blocks_area">
         <article class="article" v-for="item in cards" :key="item.title">
